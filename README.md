@@ -20,5 +20,7 @@
 
 ## Usage
 需要 BASH ，程式本體只有 `main.sh` 。
+
 如僅需下載一份，執行 `./main.sh <fn>` 。
+
 如需下載全部，則執行 `./main.sh` 。
