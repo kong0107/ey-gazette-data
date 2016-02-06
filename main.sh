@@ -16,6 +16,7 @@
 # Definitions.
 #
 minimumsize=400
+wait=10
 function grab {
 	curl -o $1.zip http://gazette.nat.gov.tw/egFront/OpenData/download.jsp?fn=$1
 	actualsize=`wc -c <$1.zip`
@@ -60,7 +61,8 @@ while [ $year -le $nowYear ]; do
 			echo $str
 			wrapper $str
 			if [ $? -ne 0 ]; then break; fi
-			sleep 10
+			echo wait $wait seconds...
+			sleep $wait
 			let date=date+1
 		done
 		let month=month+1
