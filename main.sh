@@ -21,7 +21,7 @@ function grab {
 	curl -o $1.zip http://gazette.nat.gov.tw/egFront/OpenData/download.jsp?fn=$1
 	actualsize=`wc -c <$1.zip`
 	if [ $actualsize -ge $minimumsize ]; then
-		unzip $1.zip -d data
+		unzip -o $1.zip -d data
 		rm $1.zip
 		return 0
 	else
