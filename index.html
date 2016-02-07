@@ -74,7 +74,6 @@ angular
 		<header></header>
 		<section ng-view>
 			<script type="text/ng-template" id="oneDay">
-				<pre>{{test|json}}</pre>
 				<article ng-repeat="record in data track by $index">
 					<dl ng-repeat="(key, val) in record track by key" ng-if="key != 'HTMLContent'">
 						<dt>{{tagTitles[key]}}</dt>
