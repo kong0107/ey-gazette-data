@@ -23,7 +23,7 @@ angular
 })
 .controller('oneDay', function($scope, $http, $routeParams, $location) {
 	var dateObj = new Date;
-	var split = $routeParams.date.split('-')
+	var split = ($routeParams.date || '').split('-')
 		.map(function(num) {return parseInt(num, 10);})
 	;
 	if(split.length == 3 && !split.some(isNaN) && split[0] >= 94) {
@@ -40,8 +40,8 @@ angular
 		if(year < 100) year = '0' + year;
 		if(month < 10) month = '0' + month;
 		if(date < 10) date = '0' + date;
-		
-		var str = [year, month, date].join('-');		
+
+		var str = [year, month, date].join('-');
 		$http.get('data/' + str + '/' + str + '.xml').then(
 			function(res) {
 				$location.url(str);
@@ -49,7 +49,7 @@ angular
 					.parseFromString(res.data, 'text/xml')
 					.getElementsByTagName('Record')
 				;
-				$scope.data = 
+				$scope.data =
 					Array.prototype.map.call(records, function(rec) {
 						var result = {};
 						Array.prototype.forEach.call(rec.children, function(node) {
@@ -59,7 +59,7 @@ angular
 						return result;
 					})
 				;
-			}, 
+			},
 			function(res) {
 				dateObj.setDate(dateObj.getDate() - 1);
 				if(dateObj.getFullYear() - 1911 >= 94) find(dateObj);
@@ -71,9 +71,7 @@ angular
 		</script>
 	</head>
 	<body ng-app="app" ng-controller="controller">
-		<header>
-			<a id="brand" href="./">Logo</a>
-		</header>
+		<header></header>
 		<section ng-view>
 			<script type="text/ng-template" id="oneDay">
 				<pre>{{test|json}}</pre>
