@@ -6,44 +6,84 @@
 		<title>行政院公報</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-sanitize.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.min.js"></script>
 		<script>
-			angular
-			.module('app', ['ngSanitize'])
-			.controller('controller', function($scope, $http) {
-				$http.get('tagTitles.json').then(function(res) {
-					$scope.tagTitles = res.data;
-				}, function(res) {console.error(res);});
-				$http.get('data/097-05-30/097-05-30.xml').then(function(res) {
-					$scope.raw = window.raw = res.data;
-					var records = (new DOMParser)
-						.parseFromString(res.data, 'text/xml')
-						.getElementsByTagName('Record')
-					;
-					$scope.data = window.data = 
-						Array.prototype.map.call(records, function(rec) {
-							var result = {};
-							Array.prototype.forEach.call(rec.children, function(node) {
-								if(!node.childNodes.length) return;
-								result[node.tagName] = node.childNodes[0].data;
-							});
-							return result;
-						})
-					;
-				}, function(res) {console.error(res);});
-			});
+angular
+.module('app', ['ngSanitize', 'ngRoute'])
+.config(function($routeProvider) {
+	$routeProvider.when('/:date?', {
+		templateUrl: 'oneDay',
+		controller: 'oneDay'
+	});
+})
+.controller('controller', function($scope, $http) {
+	$http.get('tagTitles.json').then(function(res) {
+		$scope.tagTitles = res.data;
+	}, function(res) {console.error(res);});
+})
+.controller('oneDay', function($scope, $http, $routeParams, $location) {
+	var dateObj = new Date;
+	var split = $routeParams.date.split('-')
+		.map(function(num) {return parseInt(num, 10);})
+	;
+	if(split.length == 3 && !split.some(isNaN) && split[0] >= 94) {
+		dateObj.setFullYear(split[0] + 1911);
+		dateObj.setMonth(split[1] - 1);
+		dateObj.setDate(split[2]);
+	}
+	find(dateObj);
+	function find(dateObj) {
+		var year = dateObj.getFullYear() - 1911,
+			month = dateObj.getMonth() + 1,
+			date = dateObj.getDate()
+		;
+		if(year < 100) year = '0' + year;
+		if(month < 10) month = '0' + month;
+		if(date < 10) date = '0' + date;
+		
+		var str = [year, month, date].join('-');		
+		$http.get('data/' + str + '/' + str + '.xml').then(
+			function(res) {
+				$location.url(str);
+				var records = (new DOMParser)
+					.parseFromString(res.data, 'text/xml')
+					.getElementsByTagName('Record')
+				;
+				$scope.data = 
+					Array.prototype.map.call(records, function(rec) {
+						var result = {};
+						Array.prototype.forEach.call(rec.children, function(node) {
+							if(!node.childNodes.length) return;
+							result[node.tagName] = node.childNodes[0].data;
+						});
+						return result;
+					})
+				;
+			}, 
+			function(res) {
+				dateObj.setDate(dateObj.getDate() - 1);
+				if(dateObj.getFullYear() - 1911 >= 94) find(dateObj);
+				else console.error('Data not found');
+			}
+		);
+	};
+});
 		</script>
 	</head>
 	<body ng-app="app" ng-controller="controller">
 		<header>
 			<a id="brand" href="./">Logo</a>
 		</header>
-		<section>
-			<article ng-repeat="record in data track by $index">
-				<dl ng-repeat="(key, val) in record track by key">
-					<dt>{{tagTitles[key]}}</dt>
-					<dd ng-bind-html="val"></dd>
-				</dl>
-			</article>
+		<section ng-view>
+			<script type="text/ng-template" id="oneDay">
+				<pre>{{test|json}}</pre>
+				<article ng-repeat="record in data track by $index">
+					<dl ng-repeat="(key, val) in record track by key" ng-if="key != 'HTMLContent'">
+						<dt>{{tagTitles[key]}}</dt>
+						<dd ng-bind="val"></dd>
+					</dl>
+				</article>
+			</script>
 		</section>
 		<footer></footer>
 	</body>
