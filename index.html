@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>行政院公報</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-sanitize.min.js"></script>
+		<script>
+			angular
+			.module('app', ['ngSanitize'])
+			.controller('controller', function($scope, $http) {
+				$http.get('tagTitles.json').then(function(res) {
+					$scope.tagTitles = res.data;
+				}, function(res) {console.error(res);});
+				$http.get('data/097-05-30/097-05-30.xml').then(function(res) {
+					$scope.raw = window.raw = res.data;
+					var records = (new DOMParser)
+						.parseFromString(res.data, 'text/xml')
+						.getElementsByTagName('Record')
+					;
+					$scope.data = window.data = 
+						Array.prototype.map.call(records, function(rec) {
+							var result = {};
+							Array.prototype.forEach.call(rec.children, function(node) {
+								if(!node.childNodes.length) return;
+								result[node.tagName] = node.childNodes[0].data;
+							});
+							return result;
+						})
+					;
+				}, function(res) {console.error(res);});
+			});
+		</script>
+	</head>
+	<body ng-app="app" ng-controller="controller">
+		<header>
+			<a id="brand" href="./">Logo</a>
+		</header>
+		<section>
+			<article ng-repeat="record in data track by $index">
+				<dl ng-repeat="(key, val) in record track by key">
+					<dt>{{tagTitles[key]}}</dt>
+					<dd ng-bind-html="val"></dd>
+				</dl>
+			</article>
+		</section>
+		<footer></footer>
+	</body>
+</html>
