@@ -19,7 +19,7 @@ angular
 	});
 })
 .controller('controller', function($scope, $http) {
-	$http.get('tagTitles.json').then(function(res) {
+	$http.get('tagTitles.json', {cache: true}).then(function(res) {
 		$scope.tagTitles = res.data;
 	}, function(res) {console.error(res);});
 })
@@ -47,7 +47,7 @@ angular
 		if(date < 10) date = '0' + date;
 
 		var str = [year, month, date].join('-');
-		$http.get('data/' + str + '/' + str + '.xml').then(
+		$http.get('data/' + str + '/' + str + '.xml', {cache: true}).then(
 			function(res) {
 				$location.url(str);
 				var records = (new DOMParser)
