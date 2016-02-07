@@ -26,6 +26,7 @@ function grab {
 		return 0
 	else
 		echo file too small, ignored
+		rm $1.zip
 		return 1
 	fi
 }
