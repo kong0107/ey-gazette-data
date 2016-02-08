@@ -10,33 +10,55 @@ mongodb.MongoClient.connect('mongodb://localhost:27017/ey-gazette', function(err
 	fs.readdir('./data', function(err, dirs) {
 		if(err) return console.error('Error: no `data` directory to import');
 		//coll = db.collection('records');
-		dirs.forEach(parseByDate);
+
+		//dirs.forEach(parseByDate);
+
+		parseByDate(dirs, 0, function() {
+			console.log('Finish');
+		});
 	});
 });
 
-function parseByDate(dateStr) {
+function parseByDate(dates, index, callback) {
+	if(index == dates.length) return setImmediate(callback);
+	var next = function(msg, err){
+		if(msg) console[err ? 'error' : 'log'](msg);
+		setImmediate(parseByDate, dates, index + 1, callback);
+	};
+	var dateStr = dates[index];
 	var split = dateStr.split('-').map(function(num) {return parseInt(num, 10);});
 	if(split.length != 3 || split.some(isNaN))
-		return console.error('Warning: skipped unknown date format %s', dateStr);
+		return next('Warning: skipped unknown date format ' + dateStr, true);
 	split[0] += 1911;
-	
-	/// 西元紀年的日期字串，用於存進資料庫。
 	var dateCEStr = (new Date(split.join('-'))).toISOString().substr(0, 10);
-	var xml = fs.readFileSync(util.format('./data/%s/%s.xml', dateStr, dateStr), 'utf8');
-	xml2js.parseString(xml, function(err, res) {
-		/*if(err) return console.error('Error: XML parsing error of ' + dateStr);
-		var records = res.Gazette.Record;*/
-		try{
-			res.Gazette.Record.forEach(function(record) {
-				record.gazetteDate = dateCEStr;
-				//parseRecord(record, dateCEStr);
+	fs.readFile(
+		util.format('./data/%s/%s.xml', dateStr, dateStr),
+		'utf8',
+		function(err, xml) {
+			if(err) return next('Error: error on file reading', err);
+			xml2js.parseString(xml, function(err, res) {
+				if(err) return next('Error: XML parsing error of ' + dateStr, err);
+				try {
+					var records = res.Gazette.Record;
+					records.forEach(function(rec) {
+						for(var i in rec) {
+							if(!Array.isArray(rec[i])
+								|| rec[i].length != 1
+							) return console.error('Error: uknown format of a record of ' + dateStr);
+							var val = rec[i][0];
+							if(val) rec[i] = val;
+							else delete rec[i];
+						}
+						rec.gazetteDate = dateCEStr;
+					});
+				}
+				catch(err) {return next('Error: xmlDoc with wrong structure ' + dateStr, err);}
+				//next(dateStr + ' ' + records.length);
+				fs.writeFile('test.json', JSON.stringify(records, null, '\t'), function(err) {
+					if(err) console.error(err);
+					else console.log('Success!');
+				});
 			});
-		} catch(err) {
-			console.error('Error: XML parsing error of ' + dateStr);
 		}
-	});
-}
-
-function parseRecord(record, dateCEStr) {
-	console.log(++counter);
+	);
 }
