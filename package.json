@@ -1,6 +1,6 @@
 {
   "name": "ey-gazette",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Backup of Executive Yuan Gazette",
   "dependencies": {
     "mongodb": "^2.1.6",
