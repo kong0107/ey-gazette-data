@@ -1,14 +1,10 @@
 {
   "name": "ey-gazette",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Backup of Executive Yuan Gazette",
   "dependencies": {
     "mongodb": "^2.1.6",
     "xml2js": "^0.4.16"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo there is no test script yet"
   },
   "repository": {
     "type": "git",

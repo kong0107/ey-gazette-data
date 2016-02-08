@@ -18,6 +18,7 @@ var outputJSON = false;
 
 /**
  * 全域變數們。
+ * @var {Collection} coll MongoDB Collection.
  */
 var util = require('util');
 var fs = require('fs');
@@ -27,17 +28,18 @@ var coll;
 if(dburl) require('mongodb').MongoClient.connect(dburl, function(err, db) {
 	if(err) return console.error('Error: cannot connect database');
 	coll = db.collection(collName);
-	main();
+	coll.drop(function() {main(db);});
 });
 else main();
 
 //
 // Functions
 //
-function main() {
+function main(db) {
 	fs.readdir('./data', function(err, dirs) {
 		if(err) return console.error('Error: no `data` directory to import');
 		parseByDate(dirs, 0, function() {
+			if(db) db.close();
 			console.log('Finish');
 		});
 	});
@@ -52,9 +54,10 @@ function parseByDate(dates, index, callback) {
 	var dateStr = dates[index];
 	var split = dateStr.split('-').map(function(num) {return parseInt(num, 10);});
 	if(split.length != 3 || split.some(isNaN))
-		return next('Warning: skipped unknown date format ' + dateStr, true);
+		return next('Warning: skipped unknown date string ' + dateStr, true);
 	split[0] += 1911;
 	var dateCEStr = (new Date(split.join('-'))).toISOString().substr(0, 10);
+
 	fs.readFile(
 		util.format('./data/%s/%s.xml', dateStr, dateStr),
 		'utf8',
@@ -66,9 +69,8 @@ function parseByDate(dates, index, callback) {
 					var records = res.Gazette.Record;
 					records.forEach(function(rec) {
 						for(var i in rec) {
-							if(!Array.isArray(rec[i])
-								|| rec[i].length != 1
-							) return console.error('Error: uknown format of a record of ' + dateStr);
+							if(!Array.isArray(rec[i]) || rec[i].length != 1)
+								return console.error('Error: uknown format of some record');
 							var val = rec[i][0];
 							if(val) rec[i] = val;
 							else delete rec[i];
