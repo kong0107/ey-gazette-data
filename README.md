@@ -1,11 +1,13 @@
 # ey-gazette-data
 行政院公報備份
 
+敬請瀏覽 https://kong0107.github.io/ey-gazette
+
 ## Data Source
 [行政院公報資訊網](http://gazette.nat.gov.tw/egFront/OpenData/help.jsp)
 
-但僅保留 XML 檔，而無 PDF 檔。	
-如欲自行下載，可考慮使用 [ey-gazette](https://github.com/kong0107/ey-gazette) 。
+僅保留 XML 檔，而不含 PDF 檔，但本庫仍逾 5GB 。	
+如欲自行從行政院公報資訊網下載（包含 PDF 檔），可考慮使用 [ey-gazette](https://github.com/kong0107/ey-gazette) 。
 
 ## Directory Structure
 `YYY/YYY-mm-dd/YYY-mm-dd.xml`	
