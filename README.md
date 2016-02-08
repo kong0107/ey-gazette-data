@@ -1,31 +1,22 @@
-# ey-gazette
-下載行政院公報
+# ey-gazette-data
+行政院公報備份
 
 ## Data Source
-資料網址格式： `http://gazette.nat.gov.tw/egFront/OpenData/download.jsp?fn=<fn>`
+[行政院公報資訊網](http://gazette.nat.gov.tw/egFront/OpenData/help.jsp)
 
-[行政院公報資訊網](http://gazette.nat.gov.tw/egFront/OpenData/help.jsp)寫到：
+但僅保留 XML 檔，而無 PDF 檔。	
+如欲自行下載，可考慮使用 [ey-gazette](https://github.com/kong0107/ey-gazette) 。
 
-> ## 本月資料
-> 提供最新一個月已出刊之公報壓縮檔，一天一個壓縮檔，…
+## Directory Structure
+`YYY/YYY-mm-dd/YYY-mm-dd.xml`	
+其中 `YYY` 為民國紀年，未滿100時補零。	
+若保留原始資料檔的 PDF 檔，即存於每個 `YYY/YYY-mm-dd` 目錄中。
 
-`<fn>` 格式為 `%03d-%02d-%02d` 。
+## License
+提供機關／行政院公報資訊網	
+此開放資料依政府資料開放授權條款 (Open Government Data License) 進行公眾釋出，使用者於遵守本條款各項規定之前提下，得利用之。	
+政府資料開放授權條款：http://data.gov.tw/license
 
-> ## 歷史資料
-> 提供行政院公報自民國94年度起各年度每月所出刊之公報壓縮檔，…
-> 此處壓縮檔非只含一天的公報，…
-> 各壓縮檔只包含該月份幾個出刊日的公報，依此類推，因此各月份都會有數量不等的壓縮檔，…
-
-`<fn>` 格式為 `%03d-%02d_%d` ，最後一個數字並不補零，且其前是底線而非引號。
-
-## Usage
-以下不需要都做，視需求而定。
-
-### 下載原始資料
-僅需 `main.sh` 。
-* 如僅需下載一份，執行 `./main.sh <fn>` 。
-* 如需下載全部，則執行 `./main.sh` ，可能需時十幾個小時，解壓縮後的資料達 20 GB 以上。
-
-### 將下載來的 XML 轉換為 JSON 或匯入 MongoDB
-* 編輯 `import2mongo.js` ，設定 `dburl` 與 `outputJSON` 。
-* 執行 `npm install && node import2mongo` 。
+Data Providing Organization/The Executive Yuan Gazette	
+The Open Data is made available to the public under the Open Government Data License, User can make use of it when complying to the condition and obligation of its terms.	
+Open Government Data License:http://data.gov.tw/license
