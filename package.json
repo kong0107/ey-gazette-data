@@ -1,0 +1,26 @@
+{
+  "name": "ey-gazette",
+  "version": "1.0.0",
+  "description": "Backup of Executive Yuan Gazette",
+  "dependencies": {
+    "mongodb": "^2.1.6",
+    "xml2js": "^0.4.16"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo there is no test script yet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kong0107/ey-gazette.git"
+  },
+  "keywords": [
+    "gov"
+  ],
+  "author": "kong0107",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/kong0107/ey-gazette/issues"
+  },
+  "homepage": "https://github.com/kong0107/ey-gazette#readme"
+}
