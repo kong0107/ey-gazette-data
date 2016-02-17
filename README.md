@@ -17,6 +17,9 @@
 其中 `YYY` 為民國紀年，未滿100時補零。	
 若保留原始資料檔的 PDF 檔，即存於每個 `YYY/YYY-mm-dd` 目錄中。
 
+## End of line
+XML 中原則上使用 "\n" 換行，但是 CDATA 中卻是使用 "\r\n" 換行。
+
 ## License
 提供機關／行政院公報資訊網	
 此開放資料依政府資料開放授權條款 (Open Government Data License) 進行公眾釋出，使用者於遵守本條款各項規定之前提下，得利用之。	
