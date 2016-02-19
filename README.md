@@ -1,7 +1,9 @@
 # ey-gazette-data
 行政院公報備份
 
-敬請瀏覽 https://kong0107.github.io/ey-gazette
+資料呈現敬請瀏覽 https://kong0107.github.io/ey-gazette
+
+應用 http://eygazette-kong0107.rhcloud.com/
 
 ## Data Source
 [行政院公報資訊網](http://gazette.nat.gov.tw/egFront/OpenData/help.jsp)
